@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quran Translation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/book.png">
+  <link href="/font/UthmanicHafs_v2-1.ttf">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            arabic: ['UthmanicHafs_v2-1'],
+            extraLight:['Poppins-ExtraLight'],
+            semiBold:['Poppins-SemiBold'],
+            popLight:['Poppins-Light'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body::-webkit-scrollbar {
+      width: 7px;
+    }
+    body::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+    body::-webkit-scrollbar-thumb {
+      background-color: rgb(12, 182, 182);
+      border-radius: 10px;
+      border: 3px solid rgb(12, 182, 182);
+    }
+    .dark body::-webkit-scrollbar-track {
+      background: #1f2a38;
+    }
+    .dark body::-webkit-scrollbar-thumb {
+      border: 3px solid rgb(12, 182, 182);
+    }
+
+
+    #ayahs::-webkit-scrollbar {
+      width: 7px;
+    }
+    #ayahs::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+    #ayahs::-webkit-scrollbar-thumb {
+      background-color: rgb(12, 182, 182);
+      border-radius: 10px;
+      border: 3px solid rgb(12, 182, 182);
+    }
+    .dark #ayahs::-webkit-scrollbar-track {
+      background: #1f2a38;
+    }
+    .dark #ayahs::-webkit-scrollbar-thumb {
+      border: 3px solid rgb(12, 182, 182);
+    }
+
+    #sidebar::-webkit-scrollbar {
+      width: 7px;
+    }
+    #sidebar::-webkit-scrollbar-track {
+      background: #f3f4f6;
+    }
+    #sidebar::-webkit-scrollbar-thumb {
+      background-color: rgb(12, 182, 182);
+      border-radius: 10px;
+      border: 3px solid rgb(12, 182, 182);
+    }
+    .dark #sidebar::-webkit-scrollbar-track {
+      background: #394d68;
+    }
+    .dark #sidebar::-webkit-scrollbar-thumb {
+      border: 3px solid rgb(12, 182, 182);
+    }
+
+
+
+    @font-face {
+      font-family: 'Poppins-ExtraLight';
+      src: url('/font/Poppins-ExtraLight.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Poppins-SemiBold';
+      src: url('/font/Poppins-SemiBold.ttf') format('truetype');
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'UthmanicHafs_v2-1';
+      src: url('/font/UthmanicHafs_v2-1.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+
+    @font-face {
+      font-family: 'Poppins-Light';
+      src: url('/font/Poppins-Light.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+      /* Custom styles for the sidebar and overlay */
+      #sidebar {
+      height: 100vh; /* Full height */
+      overflow-y: auto; /* Enable scrolling */
+    }
+    #mobile-overlay {
+      display: none; /* Hidden by default */
+    }
+
+
+    /* Add this to your existing CSS */
+.bg-yellow-200 {
+  background-color: #fef9c3;
+}
+.dark .bg-yellow-600 {
+  background-color: #eca815;
+}
+
+  </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900  bottom-0">
+ <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-lg p-4 flex justify-between items-center">
+    <div class="flex gap-2">
+      <img src="/images/book.png" alt="" class="w-8 h-8">
+      <h1 class="text-xl md:text-2xl font-extrabold text-gray-800 font-semiBold dark:text-white">Quran Translation</h1>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-xl">
+        <img src="/images/moon.png" alt="" class="w-6 h-6">
+      </button>
+      <!-- Mobile Menu Button -->
+      <button id="menu-toggle" class="sm:hidden focus:outline-none p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-xl">
+        <img src="/images/menu.png" alt="" class="w-5 h-5 dark:invert">
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Overlay -->
+  <div id="mobile-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden sm:hidden"></div>
+
+ <!-- Main Content -->
+ <div class="flex">
+    <!-- Sidebar -->
+    <aside id="sidebar" aria-label="Sidebar" class="fixed top-0 bottom-0 w-1/2 lg:w-1/4 bg-white dark:bg-gray-800 p-4 sm:relative inset-y-0 left-0 transform -translate-x-full sm:translate-x-0 transition-transform duration-300 z-50 sm:z-0">
+      <!-- Close Button for Mobile -->
+      <button id="close-sidebar" class="sm:hidden p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-xl mb-4">
+        <img src="/images/close.png" alt="" class="w-5 h-5 dark:invert">
+      </button>
+      <input type="text" id="sidebar-search" placeholder="Search Surah..." class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white">
+      <!-- Scrollable Surah List -->
+      <div id="surah-navigation" class="mt-4 w-full font-extraLight font-popLight h-[95vh] ">
+        <!-- Surah navigation will be dynamically inserted here -->
+      </div>
+
+    </aside>
+
+    <!-- Translation Content -->
+    <div class="w-full h-[80vh]  sm:w-3/4 p-4 ml-0 ">
+      <h1 id="surah-name" class="text-3xl font-bold text-center font-arabic  text-gray-800 dark:text-white"></h1>
+
+      <div class="w-full flex flex-col lg:flex-row justify-between mt-4">
+        <p id="author" class="text-gray-600 hidden lg:block mt-3 dark:text-gray-400">Translated by: Abdul Hye</p>
+        <h1 class="text-2xl font-normal text-center font-arabic text-gray-800 dark:text-white">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</h1>
+        <p id="revelation-place" class="text-gray-600 mt-3 hidden lg:block dark:text-gray-400"></p>
+        <div class="lg:hidden flex justify-between">
+        <p  class="text-gray-600 mt-3  dark:text-gray-400">Translated by: Abdul Hye</p>
+        <p id="revelation-place_m" class="text-gray-600 mt-3 dark:text-gray-400"></p>
+      </div>
+      </div>
+      <!-- Word Search Input -->
+       <div class="flex flex-col lg:flex-row justify-between">
+            <input
+              type="text"
+              id="word-search"
+              placeholder="Search word in Ayahs..."
+              class="w-[100%] lg:w-[50%] px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-teal-500 mt-4"
+            />
+            <div class="w-[100%] lg:w-[50%] flex justify-between">
+                <p class="w-[28%] mt-5 ml-4 font-Light text-gray-600 dark:text-gray-400">No of Ayah:<span id="totalAyahNumber"></span></p>
+                <!-- Inside the sidebar -->
+                <input
+                type="number"
+                id="ayah-search"
+                placeholder="Search Ayah Number..."
+                class="w-[60%] lg:w-[70%] px-4 py-2 rounded-lg border border-gray-300 dark:bg-gray-700 dark:text-white mt-4"
+                />
+          </div>
+     </div>
+      <!-- Word Count Display -->
+      <p id="word-count" class="text-sm text-gray-600 dark:text-gray-400 mt-2"></p>
+      <!-- Scrollable Translation Area -->
+      <div id="ayahs" class="mt-4 overflow-y-auto h-[calc(100vh-12rem)]">
+        <!-- Ayahs will be dynamically inserted here -->
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+
+  <!-- <footer class="dark:bg-gray-800 bg-white text-black">
+    <div class="flex justify-center lg:justify-around flex-col lg:flex-row mx-auto w-[98vw] max-w-screen-xl text-white">
+      <div class="lg:w-[40%] w-[100%] my-4">
+        <h1 class="lg:mt-3 text-sm text-black dark:text-white  md:text-2xl font-bold mx-6 lg:mx-0">
+          M Ubaid Javaid 
+          <span class="lg:mt-2 text-xs text-black dark:text-white font-light block">
+            Any fool can write code that a computer can understand. Good programmers write code that humans can understand.
+        </span>
+        </h1>
+        <div class="flex my-4 gap-4 mx-6 lg:mx-0">
+            <a href="https://github.com/MUbaidJavaid" class="cursor-pointer" target="_blank">
+                <img src="images/2993771_github_social media_icon.png" alt="" class="stroke-blue-400 w-10 h-10 p-2 bg-gray-200 dark:bg-white rounded-2xl">
+            </a>
+            <a href="https://www.linkedin.com/in/m-ubaid-javaid-31b8132ab/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" class="cursor-pointer" target="_blank">
+                <img src="images/216394_linkedin_social_icon.png" alt="" class="stroke-blue-400 w-10 h-10 p-2 bg-gray-200 dark:bg-white rounded-2xl">
+            </a>
+        </div>
+   </div>
+
+        <span class="m-auto hidden text-black dark:text-white lg:block">X</span>
+        <div class="lg:w-[40%] w-[100%]  my-4">
+          <h1 class="lg:mt-3 text-sm text-black dark:text-white md:text-2xl font-bold mx-6 lg:mx-0">
+            Muhammad Yousuf 
+            <span class="lg:mt-2 text-xs text-black dark:text-white font-light block">
+              I’m not a great programmer; I’m just a good programmer with great dreams :)
+          </span>
+          <span class="lg:mt-2 text-xs dark:text-white font-light">Let's Connect</span> 
+          </h1>
+          <div class="flex my-4 gap-4 mx-6 lg:mx-0">
+            <a href="https://github.com/yousuf-git" class="cursor-pointer" target="_blank">
+                <img src="images/2993771_github_social media_icon.png" alt="" class="stroke-blue-400 w-10 h-10 p-2 bg-gray-200 dark:bg-white rounded-2xl">
+            </a>
+            <a href="https://linkedin.com/in/muhammad-yousuf952" class="cursor-pointer" target="_blank">
+                <img src="images/216394_linkedin_social_icon.png" alt="" class="stroke-blue-400 w-10 h-10 p-2 bg-gray-200 dark:bg-white rounded-2xl">
+            </a>
+            <a href="https://www.upwork.com/freelancers/~0117518e5f6a967242?mp_source=share" class="cursor-pointer" target="_blank">
+              <img src="images/1929180_upwork_icon.png" alt="" class="stroke-blue-400 w-10 h-10 p-2 bg-gray-200 dark:bg-white rounded-2xl">
+            </a>
+        </div>
+      </div>
+    </div>
+  </footer> -->
+
+  <script>
+    // Fetch Surah Data
+    let surahData = []; // Store surah data globally
+
+    async function fetchSurahData() {
+      const response = await fetch('https://raw.githubusercontent.com/yousuf-git/quran_data/refs/heads/main/surah_details.json');
+      const data = await response.json();
+      surahData = data; // Store the data globally
+      return data;
+    }
+
+    // Fetch Arabic Translation
+    async function fetchArabicText(surahNumber) {
+      const response = await fetch(`https://raw.githubusercontent.com/fawazahmed0/quran-api/1/editions/ara-quransimple/${surahNumber}.json`);
+      const data = await response.json();
+      if(surahNumber != 1)
+      data.chapter[0].text = data.chapter[0].text.slice(39);
+      return data;
+    }
+
+    // Fetch English Translation
+    async function fetchEnglishText(surahNumber) {
+      const response = await fetch(`https://raw.githubusercontent.com/fawazahmed0/quran-api/1/editions/eng-abdulhye/${surahNumber}.json`);
+      const data = await response.json();
+    //   remove the first value from each chapter
+      return data;
+    }
+
+
+// Add this inside your script
+document.getElementById("ayah-search").addEventListener("input", function (e) {
+  const ayahNumber = parseInt(e.target.value);
+  if (!isNaN(ayahNumber) && ayahNumber > 0) {
+    scrollToAyah(ayahNumber);
+  }
+});
+
+function scrollToAyah(ayahNumber) {
+  const ayahs = document.querySelectorAll('#ayahs > div');
+  let found = false;
+
+  ayahs.forEach(ayah => {
+    const ayahTextElement = ayah.querySelector('.mt-2'); // Element containing Ayah number
+    if (ayahTextElement) {
+      const currentAyahNumber = parseInt(ayahTextElement.textContent.split(':')[1]);
+      if (currentAyahNumber === ayahNumber) {
+        ayah.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        ayah.classList.add('bg-yellow-200', 'dark:bg-yellow-600'); // Highlight the Ayah
+        found = true;
+      } else {
+        ayah.classList.remove('bg-yellow-200', 'dark:bg-yellow-600'); // Remove highlight
+      }
+    }
+  });
+
+  if (!found) {
+    alert(`Ayah number ${ayahNumber} not found in this Surah.`);
+  }
+}
+
+    // Render Surah Navigation
+    async function renderSurahNavigation(filteredSurahs = null) {
+      const surahNavigation = document.getElementById('surah-navigation');
+      surahNavigation.innerHTML = ''; // Clear previous content
+
+      const surahList = filteredSurahs || surahData; // Use filtered list if provided, else use all Surahs
+
+      surahList.forEach(surah => {
+        const link = document.createElement('a');
+        link.className = 'block p-2 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg';
+        link.textContent = surah.surahName;
+        link.href = `#${surah.surahNumber}`;
+        link.addEventListener('click', async (e) => {
+          e.preventDefault();
+          renderAyahs(surah.surahNumber);
+          updateSurahDetails(surah);
+        });
+        surahNavigation.appendChild(link);
+      });
+    }
+
+    // Update Surah Details
+    function updateSurahDetails(surah) {
+      document.getElementById('surah-name').textContent = surah.surahNameArabicLong;
+      // document.getElementById('author').textContent = `Translated by: Abdul Hye`;
+      document.getElementById('revelation-place').textContent = `Revelation Place: ${surah.revelationPlace}`;
+      document.getElementById('revelation-place_m').textContent = `Revelation Place: ${surah.revelationPlace}`;
+    }
+
+    // Render Ayahs
+// Render Ayahs
+async function renderAyahs(surahNumber) {
+  const ayahsContainer = document.getElementById('ayahs');
+  ayahsContainer.innerHTML = ''; // Clear previous content
+
+  const arabicTextData = await fetchArabicText(surahNumber);
+  const englishTextData = await fetchEnglishText(surahNumber);
+
+  // Display the total number of Ayahs
+  document.getElementById('totalAyahNumber').textContent = arabicTextData.chapter.length;
+
+  arabicTextData.chapter.forEach((arabicAyah, index) => {
+    const englishAyah = englishTextData.chapter[index];
+
+    const ayahDiv = document.createElement('div');
+    ayahDiv.className = 'mb-4 p-4  bg-white dark:bg-gray-800 rounded-lg shadow-lg';
+    ayahDiv.innerHTML = ` 
+      <div class="text-right text-2xl font-arabic text-gray-800 dark:text-white">${arabicAyah.text}</div>
+      <div class="mt-3 text-gray-800 font-extraLight dark:text-[#CECAC3]">${englishAyah.text}</div>
+      <div class="mt-2 text-sm text-gray-500 dark:text-gray-400">${surahNumber}:${arabicAyah.verse}</div>
+    `;
+    ayahsContainer.appendChild(ayahDiv);
+  });
+}
+
+
+    // Search Surah
+    function searchSurah(query) {
+      const searchQuery = query.toLowerCase();
+      const filteredSurahs = surahData.filter((surah) =>
+        surah.surahName.toLowerCase().includes(searchQuery) ||
+        surah.surahNameTranslation.toLowerCase().includes(searchQuery) ||
+        surah.surahNameArabic.includes(searchQuery)
+      );
+      renderSurahNavigation(filteredSurahs); // Render filtered Surahs
+    }
+
+// Search Word in Ayahs
+function searchWordInAyahs(query) {
+  const ayahs = document.querySelectorAll('#ayahs > div'); // Select all Ayah containers
+  let totalMatches = 0; // Counter for total matches
+
+  ayahs.forEach(ayah => {
+    const englishTextElement = ayah.querySelector('.mt-3');
+    const arabicTextElement = ayah.querySelector('.text-right');
+
+    if (!englishTextElement || !arabicTextElement) return; // Safety check
+
+    let englishText = englishTextElement.getAttribute("data-original-text") || englishTextElement.textContent;
+    let arabicText = arabicTextElement.getAttribute("data-original-text") || arabicTextElement.textContent;
+
+    // Store the original text (only once)
+    if (!englishTextElement.hasAttribute("data-original-text")) {
+      englishTextElement.setAttribute("data-original-text", englishText);
+    }
+    if (!arabicTextElement.hasAttribute("data-original-text")) {
+      arabicTextElement.setAttribute("data-original-text", arabicText);
+    }
+
+    // Reset text before applying highlights
+    englishTextElement.innerHTML = englishText;
+    arabicTextElement.innerHTML = arabicText;
+
+    if (query.trim() === '') return; // Skip if input is empty
+
+    // Highlight English text
+    const englishRegex = new RegExp(query, 'gi');
+    if (englishRegex.test(englishText)) {
+      const highlightedEnglishText = englishText.replace(
+        englishRegex,
+        match => `<span class="bg-yellow-200 dark:text-[#1f2a38]">${match}</span>`
+      );
+      englishTextElement.innerHTML = highlightedEnglishText;
+      totalMatches += (englishText.match(englishRegex) || []).length;
+    }
+
+    // Highlight Arabic text
+    const arabicRegex = new RegExp(query, 'g');
+    if (arabicRegex.test(arabicText)) {
+      const highlightedArabicText = arabicText.replace(
+        arabicRegex,
+        match => `<span class="bg-yellow-200">${match}</span>`
+      );
+      arabicTextElement.innerHTML = highlightedArabicText;
+      totalMatches += (arabicText.match(arabicRegex) || []).length;
+    }
+  });
+
+  // Add this inside your script
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const ayahTextElement = entry.target.querySelector('.mt-2');
+        if (ayahTextElement) {
+          const ayahNumber = ayahTextElement.textContent.split(':')[1];
+          document.getElementById('ayah-search').value = ayahNumber;
+        }
+      }
+    });
+  },
+  { threshold: 0.5 } // Trigger when 50% of the Ayah is visible
+);
+
+// Observe all Ayahs
+document.querySelectorAll('#ayahs > div').forEach(ayah => {
+  observer.observe(ayah);
+});
+
+  // Display the total number of matches
+  const wordCountDisplay = document.getElementById('word-count');
+  wordCountDisplay.textContent = query.trim() ? `Total matches: ${totalMatches}` : '';
+}
+
+// Attach the event listener for real-time search
+document.getElementById("word-search").addEventListener("input", function (e) {
+  searchWordInAyahs(e.target.value);
+});
+
+
+    // Sidebar Live Search Function
+    document.getElementById("sidebar-search").addEventListener("input", function (e) {
+      searchSurah(e.target.value);
+    });
+
+    // Word Search Function
+    document.getElementById("word-search").addEventListener("input", function (e) {
+      searchWordInAyahs(e.target.value);
+    });
+
+    // Theme Toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+
+    function toggleTheme() {
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+        themeToggleBtn.innerHTML = `<img src="/images/moon.png" alt="" class="w-6 h-6">`;
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.innerHTML = `<img src="/images/sun.png" alt="" class="w-6 h-6">`;
+      }
+    }
+
+    // Initialize Theme
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+      themeToggleBtn.innerHTML = `<img src="/images/sun.png" alt="" class="w-6 h-6">`;
+    } else {
+      document.documentElement.classList.remove('dark');
+      themeToggleBtn.innerHTML = `<img src="/images/moon.png" alt="" class="w-6 h-6">`;
+    }
+
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
+    // Initial Render
+    (async () => {
+      await fetchSurahData(); // Fetch and store Surah data
+      renderSurahNavigation(); // Render all Surahs initially
+
+      // Fetch surah number from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const surahNumber = urlParams.get('surah');
+      if (surahNumber) {
+        renderAyahs(surahNumber);
+        const surah = surahData.find(surah => surah.surahNumber === parseInt(surahNumber));
+        updateSurahDetails(surah);
+      }
+    })();
+
+
+    // Toggle Sidebar for Mobile
+    const menuToggle = document.getElementById('menu-toggle');
+    const closeSidebar = document.getElementById('close-sidebar');
+    const sidebar = document.getElementById('sidebar');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full'); // Show sidebar
+      mobileOverlay.classList.toggle('hidden'); // Show overlay
+    });
+
+    closeSidebar.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full'); // Hide sidebar
+      mobileOverlay.classList.add('hidden'); // Hide overlay
+    });
+
+    mobileOverlay.addEventListener('click', () => {
+      sidebar.classList.add('-translate-x-full'); // Hide sidebar
+      mobileOverlay.classList.add('hidden'); // Hide overlay
+    });
+
+
+
+  </script>
+</body>
+</html>
